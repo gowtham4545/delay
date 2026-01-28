@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>2s Audio Delay</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<h2>🎙️ Live Audio Delay (2 seconds)</h2>
+<button id="start">Start</button>
+
+<script>
+let audioContext;
+
+document.getElementById("start").onclick = async () => {
+  audioContext = new AudioContext({ sampleRate: 44100 });
+
+  await audioContext.audioWorklet.addModule("delay.js");
+
+  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  const mic = audioContext.createMediaStreamSource(stream);
+
+  const delayNode = new AudioWorkletNode(audioContext, "delay-processor");
+
+  mic.connect(delayNode).connect(audioContext.destination);
+
+  console.log("Audio delay running");
+};
+</script>
+
+</body>
+</html>
